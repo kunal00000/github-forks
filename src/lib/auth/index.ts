@@ -1,10 +1,9 @@
 import NextAuth, { DefaultSession, NextAuthConfig } from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { getDB } from "@/lib/cf";
-import { Adapter } from "next-auth/adapters";
 import { Provider } from "next-auth/providers";
 import { getRequestContext } from "@cloudflare/next-on-pages";
 import Github from "next-auth/providers/github";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { db } from "@/db";
 
 declare module "next-auth" {
   interface Session {
@@ -17,7 +16,7 @@ declare module "next-auth" {
 const authOptions = (): NextAuthConfig => {
   const cfEnv = getRequestContext().env;
   return {
-    adapter: PrismaAdapter(getDB(cfEnv)) as Adapter,
+    adapter: DrizzleAdapter(db),
     secret: cfEnv.AUTH_SECRET,
     callbacks: {
       signIn({ user }) {

@@ -29,8 +29,7 @@ pages_build_output_dir = ".vercel/output/static"
 [[d1_databases]]
 binding = "DB" # i.e. available in your Worker on env.DB
 database_name = "github-forks-d1"
-database_id = "85442896-b5a4-4c44-8b16-beeeaeaa505e"
-migrations_dir = "prisma/migrations"
+database_id = "40d60c7f-37c8-4102-9884-0b61281ea538"
 
 # Bind a Durable Object. Durable objects are a scale-to-zero compute primitive based on the actor model.
 # Durable Objects can live for as long as needed. Use these when you need a long-running "server", such as in realtime apps.

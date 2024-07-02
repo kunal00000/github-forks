@@ -8,3 +8,9 @@ interface CloudflareEnv {
 	GITHUB_CLIENT_SECRET: string;
 	DB: D1Database;
 }
+
+namespace NodeJS {
+	interface ProcessEnv {
+			DB: D1Database
+	}
+}

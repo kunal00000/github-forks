@@ -8,22 +8,6 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  webpack: (config, { isServer }) => {
-    config.experiments = {
-      ...config.experiments,
-      asyncWebAssembly: true,
-    };
-
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-      };
-    }
-
-    return config;
-  },
-};
+const nextConfig = {};
 
 export default nextConfig;
