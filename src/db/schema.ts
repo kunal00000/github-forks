@@ -34,7 +34,9 @@ export const sessions = createTable('session', {
   expires: integer("expires", { mode: "timestamp_ms" }).notNull(),
 });
 
-export const users = createTable('user', {
+export const users = createTable(
+  "user",
+  {
     id: text("id")
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
@@ -43,11 +45,12 @@ export const users = createTable('user', {
     emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
     image: text("image"),
     seed: text("seed"),
+    accessToken: text("accessToken"),
   },
   (user) => ({
     emailIdx: index("users_email_idx").on(user.email),
     idIdx: index("users_id_idx").on(user.id),
-  }),
+  })
 );
 
 export const verificationTokens = createTable('verificationToken',{

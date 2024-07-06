@@ -1,34 +1,45 @@
-import NextAuth, { DefaultSession, NextAuthConfig } from "next-auth";
+import NextAuth, { DefaultSession, NextAuthConfig, User } from "next-auth";
 import { Provider } from "next-auth/providers";
 import { getRequestContext } from "@cloudflare/next-on-pages";
 import Github from "next-auth/providers/github";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "@/db";
+import { accounts, sessions, users, verificationTokens } from "@/db/schema";
 
 declare module "next-auth" {
   interface Session {
-    user: DefaultSession["user"] & {
+    user: {
       seed?: string;
-    };
+      accessToken?: string;
+    } & DefaultSession["user"];
+  }
+  interface User {
+    seed?: string;
+    accessToken?: string;
   }
 }
 
 const authOptions = (): NextAuthConfig => {
   const cfEnv = getRequestContext().env;
   return {
-    adapter: DrizzleAdapter(db),
+    adapter: DrizzleAdapter(db, {
+      usersTable: users,
+      accountsTable: accounts,
+      verificationTokensTable: verificationTokens,
+      sessionsTable: sessions,
+    }),
     secret: cfEnv.AUTH_SECRET,
     callbacks: {
-      signIn({ user }) {
-        // @ts-expect-error
-        user.seed =
-          avatarSeeds[Math.floor(Math.random() * (avatarSeeds.length - 1))];
+      signIn({ user, account }) {
+        const seed = seeds[Math.floor(Math.random() * (seeds.length - 1))];
+        user.seed = seed;
+        user.accessToken = account?.access_token;
         return true;
       },
-      session: ({ session, user }) => {
+      async session({ session, user }) {
         session.user.id = user.id;
-        // @ts-expect-error
         session.user.seed = user.seed;
+        session.user.accessToken = user.accessToken;
         return session;
       },
     },
@@ -44,7 +55,7 @@ const authOptions = (): NextAuthConfig => {
 
 export const { handlers, auth, signIn, signOut } = NextAuth(authOptions);
 
-const avatarSeeds = [
+const seeds = [
   "Salem",
   "Spooky",
   "Gizmo",
